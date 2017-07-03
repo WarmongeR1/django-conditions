@@ -7,7 +7,8 @@
 from django import forms
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
-from jsonfield.fields import JSONField, JSONFormField, JSONWidget
+from jsonfield.fields import JSONField, JSONFormField
+from jsonfield.widgets import JSONWidget
 
 from .conditions import CompareCondition
 from .exceptions import InvalidConditionError
@@ -69,7 +70,8 @@ class ConditionsFormField(JSONFormField):
 
     def __init__(self, *args, **kwargs):
         self.condition_definitions = kwargs.pop('condition_definitions', {})
-        if 'widget' not in kwargs:
+        widget = kwargs.get('widget')
+        if not widget or not isinstance(widget, ConditionsWidget):
             kwargs['widget'] = ConditionsWidget(condition_definitions=self.condition_definitions)
         super(ConditionsFormField, self).__init__(*args, **kwargs)
 
