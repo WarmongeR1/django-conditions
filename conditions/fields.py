@@ -6,12 +6,10 @@
 
 import json
 
+import django
 from django import forms
-from django.forms.utils import flatatt
 from django.template.loader import render_to_string
 from django.utils import six
-from django.utils.encoding import force_text
-from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from jsonfield.fields import JSONField, JSONFormField
 from jsonfield.utils import default
@@ -36,21 +34,34 @@ class ConditionsWidget(JSONWidget):
             kwargs['attrs']['cols'] = 50
         super(ConditionsWidget, self).__init__(*args, **kwargs)
 
-    def render_text(self, name, value, attrs=None):
+    def render_text(self, name, value, attrs=None, renderer=None):
+        """
+        For Django 1.11
+        :param name:
+        :param value:
+        :param attrs:
+        :return:
+        """
         if value is None:
             value = ""
         if not isinstance(value, six.string_types):
-            value = json.dumps(value, ensure_ascii=False, indent=2,
+            value = json.dumps(value,
+                               ensure_ascii=False,
+                               indent=2,
                                default=default)
-        final_attrs = self.build_attrs(attrs, name=name)
-        return format_html('<textarea{}>\r\n{}</textarea>',
-                           flatatt(final_attrs),
-                           force_text(value))
+        template_name = 'django/forms/widgets/textarea.html'
+        context = self.get_context(name, value, attrs)
+        context['template_name'] = template_name
+        return self._render(template_name, context, renderer)
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         if isinstance(value, CondList):
             value = value.encode()
-        textarea = self.render_text(name, value, attrs)
+
+        if django.VERSION[:2] < (1, 11):
+            textarea = super(ConditionsWidget, self).render(name, value, attrs)
+        else:
+            textarea = self.render_text(name, value, attrs, renderer)
 
         condition_groups = []
         for groupname, group in self.condition_definitions.items():
