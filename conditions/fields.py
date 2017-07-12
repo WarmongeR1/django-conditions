@@ -4,16 +4,22 @@
 
 """
 
+import json
+
 from django import forms
+from django.forms.utils import flatatt
 from django.template.loader import render_to_string
+from django.utils import six
+from django.utils.encoding import force_text
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from jsonfield.fields import JSONField, JSONFormField
+from jsonfield.utils import default
 from jsonfield.widgets import JSONWidget
 
 from .conditions import CompareCondition
 from .exceptions import InvalidConditionError
 from .lists import CondList
-
 
 __all__ = ['ConditionsWidget', 'ConditionsFormField', 'ConditionsField']
 
@@ -30,10 +36,21 @@ class ConditionsWidget(JSONWidget):
             kwargs['attrs']['cols'] = 50
         super(ConditionsWidget, self).__init__(*args, **kwargs)
 
+    def render_text(self, name, value, attrs=None):
+        if value is None:
+            value = ""
+        if not isinstance(value, six.string_types):
+            value = json.dumps(value, ensure_ascii=False, indent=2,
+                               default=default)
+        final_attrs = self.build_attrs(attrs, name=name)
+        return format_html('<textarea{}>\r\n{}</textarea>',
+                           flatatt(final_attrs),
+                           force_text(value))
+
     def render(self, name, value, attrs=None):
         if isinstance(value, CondList):
             value = value.encode()
-        textarea = super(ConditionsWidget, self).render(name, value, attrs)
+        textarea = self.render_text(name, value, attrs)
 
         condition_groups = []
         for groupname, group in self.condition_definitions.items():
