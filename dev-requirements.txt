@@ -1,0 +1,3 @@
+nose
+psycopg2
+coverage

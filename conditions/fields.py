@@ -5,14 +5,16 @@
 """
 
 from django import forms
+from django.contrib.postgres.fields import JSONField
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
-from jsonfield.fields import JSONField, JSONFormField, JSONWidget
+
 
 from .conditions import CompareCondition
 from .exceptions import InvalidConditionError
 from .lists import CondList
-
+from .widgets import JSONWidget
+from .forms import JSONFormField
 
 __all__ = ['ConditionsWidget', 'ConditionsFormField', 'ConditionsField']
 
@@ -32,7 +34,7 @@ class ConditionsWidget(JSONWidget):
             kwargs['attrs']['cols'] = 50
         super(ConditionsWidget, self).__init__(*args, **kwargs)
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         if isinstance(value, CondList):
             value = value.encode()
         textarea = super(ConditionsWidget, self).render(name, value, attrs)
