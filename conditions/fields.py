@@ -247,6 +247,17 @@ class BaseConditionField(object):
             value = value.encode()
         return super().get_db_prep_value(value, connection, prepared)
 
+    def from_db_value(self, value, expression, connection, context):
+        value = super().from_db_value(value, expression, connection, context)
+        if value is None:
+            return None
+        if isinstance(value, str):
+            return json.loads(value)
+        if isinstance(value, dict):
+            value = CondList.decode(value,
+                                    definitions=self.condition_definitions)
+        return value
+
 
 class ConditionsField(BaseConditionField, TextJSONField):
     def __init__(self, *args, **kwargs):
