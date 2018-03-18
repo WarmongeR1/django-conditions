@@ -54,11 +54,10 @@ class JSONField(models.Field):
         if encoder_class:
             self.encoder_kwargs['cls'] = _resolve_object_path(encoder_class)
 
-        self.decoder_kwargs = dict(kwargs.pop('decoder_kwargs',
-                                              getattr(settings,
-                                                      'JSONFIELD_DECODER_KWARGS',
-                                                      {})))
-        super(JSONField, self).__init__(*args, **kwargs)
+        self.decoder_kwargs = dict(
+            kwargs.pop('decoder_kwargs',
+                       getattr(settings, 'JSONFIELD_DECODER_KWARGS', {})))
+        super().__init__(*args, **kwargs)
         self.validate(self.get_default(), None)
 
     def formfield(self, **kwargs):
@@ -225,10 +224,6 @@ class BaseConditionField(object):
     instance should be considered True.
     """
 
-    def __init__(self, *args, **kwargs):
-        self.condition_definitions = kwargs.pop('definitions', {})
-        super().__init__(*args, **kwargs)
-
     def formfield(self, **kwargs):
         kwargs['condition_definitions'] = self.condition_definitions
         return ConditionsFormField(**kwargs)
@@ -252,8 +247,12 @@ class BaseConditionField(object):
 
 
 class ConditionsField(JSONField, BaseConditionField):
-    pass
+    def __init__(self, *args, **kwargs):
+        self.condition_definitions = kwargs.pop('definitions', {})
+        super().__init__(*args, **kwargs)
 
 
 class JSONBConditionsField(PJSONField, BaseConditionField):
-    pass
+    def __init__(self, *args, **kwargs):
+        self.condition_definitions = kwargs.pop('definitions', {})
+        super().__init__(*args, **kwargs)
