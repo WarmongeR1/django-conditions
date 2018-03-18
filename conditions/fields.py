@@ -92,9 +92,6 @@ class TextJSONField(models.Field):
 
     def db_type(self, connection):
         if connection.vendor == 'postgresql':
-            # Only do jsonb if in pg 9.4+
-            if connection.pg_version >= 90400:
-                return 'jsonb'
             return 'text'
         if connection.vendor == 'mysql':
             return 'longtext'
