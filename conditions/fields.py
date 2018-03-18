@@ -66,7 +66,7 @@ class TextJSONField(models.Field):
             'widget': JSONWidget
         }
         defaults.update(**kwargs)
-        return super(JSONField, self).formfield(**defaults)
+        return super().formfield(**defaults)
 
     def validate(self, value, model_instance):
         if not self.null and value is None:
@@ -85,7 +85,7 @@ class TextJSONField(models.Field):
                 return json.loads(default, **self.decoder_kwargs)
             return json.loads(json.dumps(default, **self.encoder_kwargs),
                               **self.decoder_kwargs)
-        return super(JSONField, self).get_default()
+        return super().get_default()
 
     def get_internal_type(self):
         return 'TextField'
