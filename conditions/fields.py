@@ -234,6 +234,9 @@ class BaseConditionField(object):
                                     definitions=self.condition_definitions)
         return value
 
+    def to_python(self, value):
+        return super().to_python(value)
+
     def dumps_for_display(self, value):
         if isinstance(value, CondList):
             value = value.encode()
@@ -245,13 +248,13 @@ class BaseConditionField(object):
         return super().get_db_prep_value(value, connection, prepared)
 
 
-class ConditionsField(TextJSONField, BaseConditionField):
+class ConditionsField(BaseConditionField, TextJSONField):
     def __init__(self, *args, **kwargs):
         self.condition_definitions = kwargs.pop('definitions', {})
         super().__init__(*args, **kwargs)
 
 
-class JSONBConditionsField(PJSONField, BaseConditionField):
+class JSONBConditionsField(BaseConditionField, PJSONField):
     def __init__(self, *args, **kwargs):
         self.condition_definitions = kwargs.pop('definitions', {})
         super().__init__(*args, **kwargs)
