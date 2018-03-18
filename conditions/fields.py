@@ -30,7 +30,7 @@ __all__ = [
 ]
 
 
-class JSONField(models.Field):
+class TextJSONField(models.Field):
     """
     A field that will ensure the data entered into it is valid JSON.
     """
@@ -246,7 +246,7 @@ class BaseConditionField(object):
         return super().get_db_prep_value(value, connection, prepared)
 
 
-class ConditionsField(JSONField, BaseConditionField):
+class ConditionsField(TextJSONField, BaseConditionField):
     def __init__(self, *args, **kwargs):
         self.condition_definitions = kwargs.pop('definitions', {})
         super().__init__(*args, **kwargs)
