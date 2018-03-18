@@ -11,7 +11,7 @@ from django import forms
 from django.template.loader import render_to_string
 from django.utils import six
 from django.utils.safestring import mark_safe
-from jsonfield.fields import JSONField, JSONFormField
+from jsonfield.fields import JSONField as CJSONField, JSONFormField
 from jsonfield.utils import default
 from jsonfield.widgets import JSONWidget
 
@@ -117,7 +117,7 @@ class ConditionsFormField(JSONFormField):
             return cleaned_json
 
 
-class ConditionsField(JSONField):
+class ConditionsField(CJSONField):
     """
     ConditionsField stores information on when the "value" of the
     instance should be considered True.
