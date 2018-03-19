@@ -29,7 +29,7 @@ def default(o):
         if o.tzinfo:
             return o.strftime('%H:%M:%S%z')
         return o.strftime("%H:%M:%S")
-    if isinstance(o, set):
+    if isinstance(o, (map, set)):
         return list(o)
 
     raise TypeError(repr(o) + " is not JSON serializable")
