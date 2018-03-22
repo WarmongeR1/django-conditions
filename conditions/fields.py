@@ -103,7 +103,10 @@ class TextJSONField(models.Field):
         if value is None:
             return None
         if isinstance(value, str):
-            return json.loads(value, **self.decoder_kwargs)
+            value = json.loads(value, **self.decoder_kwargs)
+
+        if isinstance(value, (map, set)):
+            value = list(value)
         return value
 
     def get_db_prep_value(self, value, connection=None, prepared=None):
