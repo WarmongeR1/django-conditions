@@ -133,7 +133,11 @@ class TextJSONField(models.Field):
         raise TypeError('Lookup type %r not supported' % lookup_type)
 
     def value_to_string(self, obj):
-        return self._get_val_from_obj(obj)
+        try:
+            value = self.val_from_object(obj)
+        except AttributeError:
+            value = self._get_val_from_obj(obj)
+        return value
 
 
 class ConditionsWidget(JSONWidget):
