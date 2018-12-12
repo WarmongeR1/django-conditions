@@ -137,7 +137,7 @@ class TextJSONField(models.Field):
             value = self.val_from_object(obj)
         except AttributeError:
             value = self._get_val_from_obj(obj)
-        return value
+        return self.get_prep_value(value)
 
 
 class ConditionsWidget(JSONWidget):
