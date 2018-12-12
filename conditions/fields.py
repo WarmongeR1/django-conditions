@@ -134,7 +134,7 @@ class TextJSONField(models.Field):
 
     def value_to_string(self, obj):
         try:
-            value = self.val_from_object(obj)
+            value = self.value_from_object(obj)
         except AttributeError:
             value = self._get_val_from_obj(obj)
         return self.get_prep_value(value)
