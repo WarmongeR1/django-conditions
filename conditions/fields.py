@@ -16,10 +16,11 @@ from django.utils import six
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
+
 from .conditions import CompareCondition
 from .exceptions import InvalidConditionError
 from .forms import JSONFormField
-from .lists import CondList
+from .lists import CondList, CondAllList, CondAnyList
 from .utils import _resolve_object_path
 from .widgets import JSONWidget
 
@@ -114,6 +115,10 @@ class TextJSONField(models.Field):
             if not self.null and self.blank:
                 return ""
             return None
+        
+        if isinstance(value, (CondAllList, CondAnyList)):
+            value =  value.encode()
+
         return json.dumps(value, **self.encoder_kwargs)
 
     def get_prep_lookup(self, lookup_type, value):

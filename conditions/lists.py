@@ -66,7 +66,7 @@ class CondAllList(CondList):
 
     def encode(self):
         return {
-            'all': map(lambda x: x.encode(), self),
+            'all': [x.encode() for x in self],
         }
 
     def eval(self, user, **kwargs):
@@ -86,7 +86,7 @@ class CondAnyList(CondList):
 
     def encode(self):
         return {
-            'any': map(lambda x: x.encode(), self),
+            'any': [x.encode() for x in self],
         }
 
     def eval(self, user, **kwargs):
