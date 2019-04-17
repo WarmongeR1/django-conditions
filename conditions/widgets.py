@@ -2,20 +2,22 @@
 
 import json
 
-from django.forms import widgets
+import django
+from django import forms
 from django.utils import six
 
 from .utils import default
 
 
-class JSONWidget(widgets.Textarea):
-
+class JSONWidget(forms.Textarea):
     def render(self, name, value, attrs=None, renderer=None):
         if value is None:
             value = ""
         if not isinstance(value, six.string_types):
-            value = json.dumps(value,
-                               ensure_ascii=False,
-                               indent=2,
+            value = json.dumps(value, ensure_ascii=False, indent=2,
                                default=default)
-        return super(JSONWidget, self).render(name, value, attrs)
+        if django.VERSION < (2, 0):
+            return super(JSONWidget, self).render(name, value, attrs)
+
+        return super(JSONWidget, self).render(name, value, attrs, renderer)
+
